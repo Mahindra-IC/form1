@@ -10,9 +10,21 @@
       padding: 0;
       display: flex;
       justify-content: center;
+        flex-wrap: wrap;
       align-items: center;
       height: 100vh;
       background-color: #f4f4f4;
+    }
+
+    #description {
+      max-width: 400px;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      justify-content: center;
+      align-items: center;
     }
 
     #suggestionForm {
@@ -20,7 +32,10 @@
       padding: 20px;
       background-color: #fff;
       border-radius: 8px;
+      margin-left: 20px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      justify-content: center;
+      align-items: center;
     }
 
     h2 {
@@ -57,32 +72,41 @@
     }
 
     #previousSuggestions {
-      max-width: 400px;
+      width: 200px; /* Set a fixed width */
       margin-top: 20px;
       margin-left: 50px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      overflow-y: scroll; /* Add vertical scrollbar */
+      max-height: 300px; /* Set a max height for scrollability */
+      padding: 10px;
     }
 
     ul {
       list-style: none;
       padding: 0;
+      margin: 0; /* Remove default margin */
     }
 
     li {
-      margin-bottom: 8px;
       padding: 8px;
       background-color: #fff;
+      margin-bottom: 7px;
       border-radius: 4px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      word-wrap: break-word; /* Allow long words to wrap */
     }
   </style>
 </head>
 <body>
-    <div id="suggestionForm">
-        <h2>Please take a moment to reflect on the following questions:</h2>
- 
-        <p>1. Current Paper Usage: What are the primary areas where we heavily rely on paper?
-        2. Challenges: What potential challenges or concerns do you foresee in transitioning to a paperless system?
-        3. Ideas for Improvement: What specific ideas or technologies do you believe can help us reduce paper usage without compromising efficiency?</p>
+    <div id="description">
+    <h2>Welcome to our suggestion platform! Share your ideas and suggestions with us</h2>
+    <ul>
+        <li>1. Current Paper Usage: What are the primary areas where we heavily rely on paper?</li>
+        <li>2. Challenges: What potential challenges or concerns do you foresee in transitioning to a paperless system?</li>
+        <li>3. Ideas for Improvement: What specific ideas or technologies do you believe can help us reduce paper usage without compromising efficiency?</li>
+    </ul>
+  </div>
 
   <div id="suggestionForm">
     <h2>Share Your Suggestion</h2>
@@ -98,7 +122,7 @@
   </div>
 
   <div id="previousSuggestions">
-    <h3>Name List</h3>
+    <h3>Name List:</h3>
     <ul id="suggestionsList"></ul>
   </div>
 
@@ -117,54 +141,52 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-
-    const form = document.getElementById('suggestionForm');
+  
+    const form = document.getElementById('form');
     const suggestionsList = document.getElementById('suggestionsList');
-
+  
     form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+        e.preventDefault();
 
-      const name = form.name.value;
-      const suggestion = form.suggestion.value;
-
-      try {
-        await addDoc(collection(db, 'suggestions'), {
-          name: name,
-          suggestion: suggestion
+        const name = form.name.value;
+        const suggestion = document.getElementById("suggestion").value;
+  
+        try {
+            await addDoc(collection(db, 'suggestions'), {
+                name: name,
+                suggestion: suggestion
+            });
+            alert('Thank you for your suggestion!');
+            form.reset(); // Clear the form fields after submission
+        } catch (error) {
+            console.error('Error adding suggestion: ', error);
+            alert('Oops! Something went wrong. Please try again.');
+        }
+    });
+  
+    try {
+        const querySnapshot = await getDocs(collection(db, 'suggestions'));
+  
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const suggestionItem = document.createElement('li');
+            suggestionItem.textContent = `${data.name}`;
+            suggestionsList.appendChild(suggestionItem);
         });
-        alert('Thank you for your suggestion!');
-        form.reset(); // Clear the form fields after submission
-      } catch (error) {
-        console.error('Error adding suggestion: ', error);
-        alert('Oops! Something went wrong. Please try again.');
-      }
-    });
-    console.log('Form submitted');
-    console.log('Name:', name);
-    console.log('Suggestion:', suggestion);
+  
+        onSnapshot(query(collection(db, 'suggestions')), (snapshot) => {
+            suggestionsList.innerHTML = ''; // Clear previous suggestions
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const suggestionItem = document.createElement('li');
+                suggestionItem.textContent = `${data.name}`;
+                suggestionsList.appendChild(suggestionItem);
+            });
+        });
+    } catch (error) {
+        console.error('Error fetching suggestions: ', error);
+    }
 
-
-    // Fetch and display suggestions
-    const suggestionsRef = collection(db, 'suggestions');
-    const querySnapshot = await getDocs(suggestionsRef);
-
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
-      const suggestionItem = document.createElement('li');
-      suggestionItem.textContent = `${data.name}`;
-      suggestionsList.appendChild(suggestionItem);
-    });
-
-    // Listen for changes in real-time and update suggestions
-    onSnapshot(query(suggestionsRef), (snapshot) => {
-      suggestionsList.innerHTML = ''; // Clear previous suggestions
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        const suggestionItem = document.createElement('li');
-        suggestionItem.textContent = `${data.name}`;
-        suggestionsList.appendChild(suggestionItem);
-      });
-    });
   </script>
 </body>
 </html>
