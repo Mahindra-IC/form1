@@ -19,24 +19,30 @@ function fetchDataAndExportToExcel() {
     const data = [];
 
     getDocs(collection(db, "suggestions")).then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-            data.push(doc.data());
-        });
+    querySnapshot.forEach((doc) => {
+      data.push(doc.data());
+    });
 
-        const ws = XLSX.utils.json_to_sheet(data);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Firestore Data");
+    if (data.length > 0) {
+      const keys = Object.keys(data[0]);
+      const wsData = data.map((item) => keys.map((key) => item[key]));
+      const ws = XLSX.utils.aoa_to_sheet([keys, ...wsData]);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Firestore Data");
 
-        const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
-        const blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
-        const url = URL.createObjectURL(blob);
+      const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+      const blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
+      const url = URL.createObjectURL(blob);
 
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", "firestore_data.xlsx");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "firestore_data.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      console.error("No data to export.");
+    }
     });
 }
 
