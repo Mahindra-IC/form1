@@ -1,7 +1,7 @@
 // script.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import * as XLSX from 'https://cdn.jsdelivr.net/npm/xlsx@0.18.0/dist/xlsx.full.min.mjs';
+import * as XLSX from 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
 
 const firebaseConfig = {
     apiKey: "AIzaSyAmcmGoJUxsbcyceddAi0Y0zQGZhUSddeE", // Add your API key here
