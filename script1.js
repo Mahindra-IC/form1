@@ -26,6 +26,7 @@ async function fetchDataAndExportToExcel() {
     });
     
     console.log("Retrieved Firestore Data:", data);
+    
     if (data.length > 0) {
       const keys = Object.keys(data[0]);
       const ws = XLSX.utils.book_new();
@@ -49,11 +50,11 @@ async function fetchDataAndExportToExcel() {
     } else {
       console.error("No data to export.");
     }
-      catch (error) {
+  } catch (error) {
     console.error("Error fetching Firestore data:", error);
   }
-    });
 }
+
 
 function s2ab(s) {
     const buf = new ArrayBuffer(s.length);
