@@ -25,12 +25,15 @@ function fetchDataAndExportToExcel() {
 
     if (data.length > 0) {
       const keys = Object.keys(data[0]);
-      const wsData = data.map((item) => keys.map((key) => item[key]));
-      const ws = XLSX.utils.aoa_to_sheet([keys, ...wsData]);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Firestore Data");
+      const ws = XLSX.utils.book_new();
 
-      const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+      data.forEach((item, index) => {
+        const values = Object.values(item);
+        const arr = keys.map((key) => item[key]);
+        XLSX.utils.book_append_sheet(ws, XLSX.utils.aoa_to_sheet([keys, arr]), `Sheet${index + 1}`);
+      });
+
+      const wbout = XLSX.write(ws, { bookType: 'xlsx', type: 'binary' });
       const blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
       const url = URL.createObjectURL(blob);
 
