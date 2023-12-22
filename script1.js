@@ -17,12 +17,12 @@ const db = getFirestore(app);
 
 function fetchDataAndExportToExcel() {
     const data = [];
-
+    
     getDocs(collection(db, "suggestions")).then((querySnapshot) => {
     querySnapshot.forEach((doc) => {
       data.push(doc.data());
     });
-
+     console.log("Retrieved Firestore Data:", data);
     if (data.length > 0) {
       const keys = Object.keys(data[0]);
       const ws = XLSX.utils.book_new();
