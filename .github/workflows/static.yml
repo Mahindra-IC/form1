@@ -41,5 +41,5 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         env:
-          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+          FIREBASE_API_KEY: ${{ secrets.FIRESTORE_SECRET }}
         uses: actions/deploy-pages@v3
