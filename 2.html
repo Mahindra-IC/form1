@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Firebase Firestore to Excel</title>
-  <script type="module" src="script1.js" defer></script> <!-- Reference to your script.js -->
+    <meta charset="UTF-8">
+    <title>Firebase Firestore to Excel</title>
 </head>
 <body>
-  <h1>Firebase Firestore to Excel</h1>
-  <button onclick="fetchDataAndExportToExcel()">Export Firestore Data to Excel</button>
+    <h1>Firebase Firestore to Excel</h1>
+    <button id="exportButton">Export Firestore Data to Excel</button>
+    <script type="module" src="script1.js"></script>
+    <script>
+        import { fetchDataAndExportToExcel } from './script.js';
+        document.getElementById('exportButton').addEventListener('click', fetchDataAndExportToExcel);
+    </script>
 </body>
 </html>
