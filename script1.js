@@ -15,14 +15,17 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-function fetchDataAndExportToExcel() {
-    const data = [];
+async function fetchDataAndExportToExcel() {
+  const data = [];
+  
+  try {
+    const querySnapshot = await getDocs(collection(db, "suggestions"));
     
-    getDocs(collection(db, "suggestions")).then((querySnapshot) => {
     querySnapshot.forEach((doc) => {
       data.push(doc.data());
     });
-     console.log("Retrieved Firestore Data:", data);
+    
+    console.log("Retrieved Firestore Data:", data);
     if (data.length > 0) {
       const keys = Object.keys(data[0]);
       const ws = XLSX.utils.book_new();
@@ -46,6 +49,9 @@ function fetchDataAndExportToExcel() {
     } else {
       console.error("No data to export.");
     }
+      catch (error) {
+    console.error("Error fetching Firestore data:", error);
+  }
     });
 }
 
