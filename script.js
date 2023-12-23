@@ -41,7 +41,7 @@ import { getFirestore, collection, addDoc, query, onSnapshot, getDocs } from "ht
         querySnapshot.forEach((doc) => {
             const data = doc.data();
             const suggestionItem = document.createElement('li');
-            suggestionItem.textContent = `${data.name}: ${data.suggestion}`;
+            suggestionItem.textContent = `${data.name}`;
             suggestionsList.appendChild(suggestionItem);
         });
   
@@ -50,7 +50,7 @@ import { getFirestore, collection, addDoc, query, onSnapshot, getDocs } from "ht
             snapshot.forEach((doc) => {
                 const data = doc.data();
                 const suggestionItem = document.createElement('li');
-                suggestionItem.textContent = `${data.name}: ${data.suggestion}`;
+                suggestionItem.textContent = `${data.name}`;
                 suggestionsList.appendChild(suggestionItem);
             });
         });
