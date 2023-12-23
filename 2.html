@@ -3,12 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>Firebase Firestore to Excel</title>
-</head>
+<style>
+
+#previousSuggestions {
+  width: 400px; /* Set a fixed width */
+  margin-top: 20px;
+  margin-left: 50px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow-y: scroll; /* Add vertical scrollbar */
+  max-height: 300px; /* Set a max height for scrollability */
+  padding: 10px;
+
+  ul {
+      list-style: none;
+      padding: 0;
+      margin: 0; /* Remove default margin */
+    }
+}</style>
+  </head>
+
 <body>
     <h1>Firebase Firestore to Excel</h1>
     <button id="exportButton">Export Firestore Data to Excel</button>
 
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.0/dist/xlsx.full.min.js"></script>
+
+    <div id="previousSuggestions">
+      <h3>Name List:</h3>
+      <ul id="suggestionsList"></ul>
+    </div>
+
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -24,6 +49,27 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
+        try {
+        const querySnapshot = await getDocs(collection(db, 'suggestions'));
+  
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const suggestionItem = document.createElement('li');
+            suggestionItem.textContent = `${data.name}: ${data.suggestion}`;
+            suggestionsList.appendChild(suggestionItem);
+        });
+  
+        onSnapshot(query(collection(db, 'suggestions')), (snapshot) => {
+            suggestionsList.innerHTML = ''; // Clear previous suggestions
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const suggestionItem = document.createElement('li');
+                suggestionItem.textContent = `${data.name}: ${data.suggestion}`;
+                suggestionsList.appendChild(suggestionItem);
+            });
+          });}catch (error) {
+        console.error('Error fetching suggestions: ', error);}
 
         async function fetchDataAndExportToExcel() {
     const data = [];
